@@ -1,5 +1,6 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
 import LoginPage from './pages/LoginPage';
+import ChallengesPage from './pages/ChallengesPage';
 import { useContext } from 'react';
 import { AppContext } from './context/AppContext';
 import DashboardPage from './pages/DashboardPage';
@@ -15,6 +16,7 @@ export default function App() {
 
 				<Route element={isAuthenticated ? <Container /> : <Navigate to="/login" />}>
 					<Route path='/' element={<DashboardPage />}></Route>
+					<Route path='/retos' element={isAuthenticated ? <ChallengesPage /> : <Navigate to="/login" />}></Route>
 					{/* <Route path='/empresas' element={isAuthenticated ? <CompaniesPage /> : <Navigate to="/login" />}></Route>
 					<Route path='/retos' element={isAuthenticated ? <ChallengesPage /> : <Navigate to="/login" />}></Route>
 					<Route path='/categorias' element={isAuthenticated ? <CategoriesPage /> : <Navigate to="/login" />}></Route>
