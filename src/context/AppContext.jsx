@@ -16,7 +16,6 @@ function getErrorMessage(error) {
 	return error.message;
 }
 
-
 const AppContext = createContext();
 
 function AppProvider({ children }) {
@@ -43,7 +42,7 @@ function AppProvider({ children }) {
 			setLoggedUser(response.data);
 			navigate('/');
 		} catch (error) {
-			toast.error(getErrorMessage(error))
+			toast.error(getErrorMessage(error));
 		}
 	};
 
@@ -62,7 +61,12 @@ function AppProvider({ children }) {
 		}
 	};
 
-	return <AppContext.Provider value={{ isAuthenticated, setIsAuthenticated, loggedUser, setLoggedUser, showContainer, setShowContainer, register, handleSubmit, errors, onLogin, onRegister }}>
+	const onLogout = () => {
+		setIsAuthenticated(false);
+		setLoggedUser('');
+	};
+
+	return <AppContext.Provider value={{ isAuthenticated, setIsAuthenticated, loggedUser, setLoggedUser, showContainer, setShowContainer, register, handleSubmit, errors, onLogin, onRegister, onLogout }}>
 		{children}
 	</AppContext.Provider>;
 };
