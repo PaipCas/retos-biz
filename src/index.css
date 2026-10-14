@@ -18,6 +18,7 @@
 body {
 	font-family: "Plus Jakarta Sans", sans-serif;
 	color: var(--color-slate-900);
+	background: var(--color-slate-100);
 }
 
 .bg-grid-pattern {
@@ -25,13 +26,14 @@ body {
 	background-size: 24px 24px;
 }
 
-label:has(~ [required]),
-label:has(~ * > [required]) {
+label:has(~ [data-required]),
+label:has(~ * > [data-required]) {
 	&:after {
 		content: ' •';
 		color: var(--color-red-500);
 		top: -0.4rem;
 		position: relative;
+		font-size: 0.75em;
 	}
 }
 
