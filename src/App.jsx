@@ -1,10 +1,12 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
 import LoginPage from './pages/LoginPage';
+import CompaniesPage from './pages/CompaniesPage';
 import { useContext } from 'react';
 import { AppContext } from './context/AppContext';
 
+
 export default function App() {
-	const isAuthenticated = useContext(AppContext);
+	const { isAuthenticated } = useContext(AppContext);
 	return (
 		<>
 			<Routes>
