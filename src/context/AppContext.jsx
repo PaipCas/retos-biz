@@ -2,17 +2,34 @@ import axios from 'axios';
 import { createContext, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
+
+function getErrorMessage(error) {
+	if (error.response) {
+		const { status, data } = error.response;
+
+		return data?.error || `Error ${status}`;
+	}
+
+	if (error.request) return 'No se pudo conectar con el servidor. ¿Está encendido el backend?';
+
+	return error.message;
+}
+
 
 const AppContext = createContext();
 
 function AppProvider({ children }) {
-	const [isAuthenticated, setIsAuthenticated] = useState(sessionStorage.getItem('isAuthenticated') === 'true');
-	const [loggedUser, setLoggedUser] = useState(sessionStorage.getItem('loggedUser') || '');
+	const [isAuthenticated, setIsAuthenticated] = useState(localStorage.getItem('isAuthenticated') === 'true');
+	const [loggedUser, setLoggedUser] = useState(() => {
+		const saved = localStorage.getItem('loggedUser');
+		return saved ? JSON.parse(saved) : null;
+	});
 	const [showContainer, setShowContainer] = useState('login');
 
 	useEffect(() => {
-		sessionStorage.setItem('isAuthenticated', isAuthenticated);
-		sessionStorage.setItem('userName', loggedUser);
+		localStorage.setItem('isAuthenticated', isAuthenticated);
+		loggedUser ? localStorage.setItem('loggedUser', JSON.stringify(loggedUser)) : localStorage.removeItem('loggedUser');
 	}, [isAuthenticated, loggedUser]);
 
 	const { register, handleSubmit, formState: { errors } } = useForm();
@@ -21,17 +38,31 @@ function AppProvider({ children }) {
 	const onLogin = async data => {
 		try {
 			const response = await axios.post('http://localhost:3001/api/login', data);
-			alert(`Bienvenido ${response.data.nombre}`);
+			toast.success('Sesión iniciada correctamente', { description: `Bienvenido a RetosBiz, ${response.data.nombre}` });
 			setIsAuthenticated(true);
-			setLoggedUser(response.data.nombre);
+			setLoggedUser(response.data);
 			navigate('/');
 		} catch (error) {
-			console.error(error);
-			alert('El usuario y/o contraseña es incorrecto');
+			toast.error(getErrorMessage(error))
 		}
 	};
 
-	return <AppContext.Provider value={{ isAuthenticated, setIsAuthenticated, loggedUser, setLoggedUser, showContainer, setShowContainer, register, handleSubmit, errors, onLogin }}>
+	const onRegister = async data => {
+		try {
+			const response = await axios.post('http://localhost:3001/api/usuarios', {
+				nombre: data.nombre,
+				correo: data.correo,
+				celular: data.celular,
+				contrasena: data.contrasena
+			});
+			toast.success('Cuenta creada', { description: 'Ya puedes iniciar sesión con tu correo' });
+			setShowContainer('login');
+		} catch (error) {
+			toast.error('No se pudo crear la cuenta', { description: getErrorMessage(error) });
+		}
+	};
+
+	return <AppContext.Provider value={{ isAuthenticated, setIsAuthenticated, loggedUser, setLoggedUser, showContainer, setShowContainer, register, handleSubmit, errors, onLogin, onRegister }}>
 		{children}
 	</AppContext.Provider>;
 };
