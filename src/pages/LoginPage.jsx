@@ -74,7 +74,7 @@ export default function LoginPage() {
 					</div>
 
 					<div className="w-full max-w-md">
-						<div className="flex bg-slate-100 rounded-xl p-1 mb-8">
+						<div className="flex bg-slate-50 rounded-xl p-1 mb-8">
 							{tabs.map((tab, index) => (
 								<button key={index} className={`flex-1 py-2 text-sm font-500 rounded-lg transition-all duration-200 text-slate-500 hover:text-slate-900 [.active]:bg-white [.active]:shadow-sm [.active]:text-slate-900 ${showContainer === tab.value ? 'active' : ''}`} onClick={() => setShowContainer(tab.value)}>{tab.label}</button>
 							))}

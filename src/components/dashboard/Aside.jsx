@@ -1,10 +1,13 @@
-import { BuildingComplex, LayoutDashboard, Tags, Target } from 'lucide-react';
+import { BuildingComplex, LayersArrowUp, LayoutDashboard, LogOut, NotepadText, Tags, Target } from 'lucide-react';
 import logo from '../../assets/images/logo.png';
 import NavItem from './NavItem';
+import { useContext } from 'react';
+import { AppContext } from '../../context/AppContext';
 
 export default function Aside() {
+	const { onLogout } = useContext(AppContext);
 	return (
-		<aside className='relative flex flex-col bg-card border-r border-slate-200 sidebar-transition shrink-0 w-60 h-screen'>
+		<aside className='fixed -left-60 [.open]:left-0 md:relative md:left-0 flex flex-col bg-white border-r border-slate-200 sidebar-transition shrink-0 w-60 h-screen'>
 			<div className="flex items-center border-b border-slate-200 px-4 py-4 gap-3">
 				<div className="flex items-center">
 					<img src={logo} alt="Logo" className='size-8' />
@@ -26,8 +29,28 @@ export default function Aside() {
 
 					<NavItem link='/empresas' text='Empresas' icon={BuildingComplex} />
 					<NavItem link='/categorias' text='Categorías' icon={Tags} />
+					<NavItem link='/prioridades' text='Prioridades' icon={LayersArrowUp} />
+					<NavItem link='/registros' text='Registros' icon={NotepadText} />
 				</div>
 			</nav>
+
+			<div className="border-t border-slate-200 p-2">
+				<div className="flex items-center gap-3 px-2 py-2 rounded-lg">
+					<div className="size-7 rounded-full bg-primary-600/10 flex items-center justify-center shrink-0">
+						<span className="text-xs font-700 text-primary-600">JM</span>
+					</div>
+
+					<div className="flex-1 min-w-0">
+						<p className="text-xs font-60 truncate">Juan Martínez</p>
+
+						<p className="text-[10px] text-slate-500 truncate">jmartinez@correo.com</p>
+					</div>
+
+					<button type="button" className="text-slate-500 hover:text-slate-900 transition-colors" onClick={onLogout}>
+						<LogOut className='size-3.5' />
+					</button>
+				</div>
+			</div>
 		</aside>
 	);
 }
