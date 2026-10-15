@@ -1,5 +1,6 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
 import LoginPage from './pages/LoginPage';
+import ChallengesPage from './pages/ChallengesPage';
 import { useContext } from 'react';
 import { AppContext } from './context/AppContext';
 import DashboardPage from './pages/DashboardPage';
