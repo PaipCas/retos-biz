@@ -27,34 +27,34 @@ export default function LoginPage() {
 							<img src={logoWhite} alt="Logo" className='size-9' />
 						</div>
 
-						<span className="text-xl font-700 text-white tracking-tight">RetosBiz</span>
+						<span className="text-xl text-white tracking-tight">RetosBiz</span>
 					</div>
 
 					<div className="relative">
-						<div className="inline-flex items-center gap-2 bg-white/10 text-white/80 text-xs font-500 px-3 py-1.5 rounded-full mb-6">
+						<div className="inline-flex items-center gap-2 bg-white/10 text-white/80 text-xs px-3 py-1.5 rounded-full mb-6">
 							<span className="w-1.5 h-1.5 rounded-full bg-primary-400 animate-pulse"></span>
 							Plataforma activa · 94 empresas
 						</div>
 
-						<h2 className="text-3xl font-700 text-white leading-tight mb-4 max-w-xs">Gestiona los retos empresariales con claridad y control.</h2>
+						<h2 className="text-3xl text-white leading-tight mb-4 max-w-xs">Gestiona los retos empresariales con claridad y control.</h2>
 
 						<p className="text-white/70 text-sm leading-relaxed max-w-xs">Registra, prioriza y resuelve desafíos operativos en un solo lugar. Analítica en tiempo real para decisiones más rápidas.</p>
 
 						<div className="grid grid-cols-3 gap-4 mt-8">
 							<div className="bg-white/10 rounded-xl p-3">
-								<p className="text-xl font-700 font-tabular text-white">1.284</p>
+								<p className="text-xl tabular-nums text-white">1.284</p>
 
 								<p className="text-white/60 text-[11px] mt-0.5">Retos totales</p>
 							</div>
 
 							<div className="bg-white/10 rounded-xl p-3">
-								<p className="text-xl font-700 font-tabular text-white">73.4%</p>
+								<p className="text-xl tabular-nums text-white">73.4%</p>
 
 								<p className="text-white/60 text-[11px] mt-0.5">Cumplimiento</p>
 							</div>
 
 							<div className="bg-white/10 rounded-xl p-3">
-								<p className="text-xl font-700 font-tabular text-white">94</p>
+								<p className="text-xl tabular-nums text-white">94</p>
 
 								<p className="text-white/60 text-[11px] mt-0.5">Empresas</p>
 							</div>
@@ -70,13 +70,13 @@ export default function LoginPage() {
 							<img src={logo} alt="Logo" className='size-9' />
 						</div>
 
-						<span className="text-lg font-700">RetosBiz</span>
+						<span className="text-lg">RetosBiz</span>
 					</div>
 
 					<div className="w-full max-w-md">
-						<div className="flex bg-slate-50 rounded-xl p-1 mb-8">
+						<div className="flex bg-slate-100 rounded-xl p-1 mb-8">
 							{tabs.map((tab, index) => (
-								<button key={index} className={`flex-1 py-2 text-sm font-500 rounded-lg transition-all duration-200 text-slate-500 hover:text-slate-900 [.active]:bg-white [.active]:shadow-sm [.active]:text-slate-900 ${showContainer === tab.value ? 'active' : ''}`} onClick={() => setShowContainer(tab.value)}>{tab.label}</button>
+								<button key={index} className={`flex-1 py-2 text-sm rounded-lg transition-all duration-200 text-slate-500 hover:text-slate-900 [.active]:bg-white [.active]:shadow-sm [.active]:text-slate-900 ${showContainer === tab.value ? 'active' : ''}`} onClick={() => setShowContainer(tab.value)}>{tab.label}</button>
 							))}
 						</div>
 

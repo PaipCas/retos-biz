@@ -5,7 +5,9 @@ import { useContext } from 'react';
 import { AppContext } from './context/AppContext';
 import DashboardPage from './pages/DashboardPage';
 import { Toaster } from 'sonner';
-import Container from './components/dashboard/Container';
+import Container from './components/container/Container';
+import CategoriesPage from './pages/CategoriesPage';
+import { CategoriesProvider } from './context/CategoriesContext';
 
 export default function App() {
 	const { isAuthenticated } = useContext(AppContext);
@@ -16,12 +18,11 @@ export default function App() {
 
 				<Route element={isAuthenticated ? <Container /> : <Navigate to="/login" />}>
 					<Route path='/' element={<DashboardPage />}></Route>
-					<Route path='/retos' element={isAuthenticated ? <ChallengesPage /> : <Navigate to="/login" />}></Route>
-					{/* <Route path='/empresas' element={isAuthenticated ? <CompaniesPage /> : <Navigate to="/login" />}></Route>
-					<Route path='/retos' element={isAuthenticated ? <ChallengesPage /> : <Navigate to="/login" />}></Route>
-					<Route path='/categorias' element={isAuthenticated ? <CategoriesPage /> : <Navigate to="/login" />}></Route>
-					<Route path='/prioridades' element={isAuthenticated ? <PrioritiesPage /> : <Navigate to="/login" />}></Route>
-					<Route path='/registros' element={isAuthenticated ? <RecordsPage /> : <Navigate to="/login" />}></Route> */}
+					{/* <Route path='/empresas' element={isAuthenticated ? <CompaniesPage /> : <Navigate to="/login" />}></Route> */}
+					{/* <Route path='/retos' element={isAuthenticated ? <ChallengesPage /> : <Navigate to="/login" />}></Route> */}
+					<Route path='/categorias' element={<CategoriesProvider><CategoriesPage /></CategoriesProvider>}></Route>
+					{/* <Route path='/prioridades' element={isAuthenticated ? <PrioritiesPage /> : <Navigate to="/login" />}></Route> */}
+					{/* <Route path='/registros' element={isAuthenticated ? <RecordsPage /> : <Navigate to="/login" />}></Route> */}
 				</Route>
 			</Routes >
 
