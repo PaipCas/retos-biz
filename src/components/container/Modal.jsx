@@ -25,9 +25,9 @@ export default function Modal({ open, onClose, title, subtitle, footer, children
 
 	return createPortal(
 		<div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-			<div className="absolute inset-0 bg-slate-900/40 backdrop-blur-[2px]" onClick={onClose} />
+			<div className="absolute inset-0 bg-slate-900/40 backdrop-blur-[2px] animate-[fade-in_0.2s_ease_backwards]" onClick={onClose} />
 
-			<div role="dialog" aria-modal="true" aria-labelledby="modal-title" className="relative w-full max-w-lg max-h-[90vh] flex flex-col bg-white border border-slate-200 rounded-xl shadow-xl">
+			<div role="dialog" aria-modal="true" aria-labelledby="modal-title" className="relative w-full max-w-lg max-h-[90vh] flex flex-col bg-white border border-slate-200 rounded-xl shadow-xl animate-[scale-in_0.15s_ease_backwards]">
 				<div className="flex items-start justify-between gap-4 px-5 py-4 border-b border-slate-200">
 					<div>
 						<h2 id="modal-title" className="text-base font-600 text-slate-900">{title}</h2>
