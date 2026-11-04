@@ -1,11 +1,13 @@
 import axios from 'axios';
-import { createContext, useCallback, useEffect, useState } from 'react';
+import { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
+import { DashboardContext } from './DashboardContext';
 
 const CategoriesContext = createContext();
 
 function CategoriesProvider({ children }) {
+	const { markAsUpdated } = useContext(DashboardContext);
 	const [categorias, setCategorias] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [search, setSearch] = useState('');
@@ -49,6 +51,7 @@ function CategoriesProvider({ children }) {
 				area_responsable: data.area_responsable.trim(),
 			});
 			setCategorias(prev => [...prev, response.data]);
+			markAsUpdated();
 			toast.success('Categoría creada', { description: response.data.nombre });
 			closeCreateModal();
 		} catch (error) {
@@ -65,6 +68,7 @@ function CategoriesProvider({ children }) {
 		try {
 			await axios.delete(`http://localhost:3001/api/categorias/${categoria.id}`);
 			setCategorias(prev => prev.filter(item => item.id !== categoria.id));
+			markAsUpdated();
 			toast.success('Categoría eliminada', { description: categoria.nombre });
 		} catch (error) {
 			console.error(error);

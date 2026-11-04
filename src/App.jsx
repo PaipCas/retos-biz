@@ -7,6 +7,9 @@ import { Toaster } from 'sonner';
 import Container from './components/container/Container';
 import CategoriesPage from './pages/CategoriesPage';
 import { CategoriesProvider } from './context/CategoriesContext';
+import { DashboardProvider } from './context/DashboardContext';
+import PrioritiesPage from './pages/PrioritiesPage';
+import { PrioritiesProvider } from './context/PrioritiesContext';
 
 export default function App() {
 	const { isAuthenticated } = useContext(AppContext);
@@ -15,12 +18,12 @@ export default function App() {
 			<Routes>
 				<Route path='/login' element={isAuthenticated ? <Navigate to="/" /> : <LoginPage />}></Route>
 
-				<Route element={isAuthenticated ? <Container /> : <Navigate to="/login" />}>
+				<Route element={isAuthenticated ? <DashboardProvider><Container /></DashboardProvider> : <Navigate to="/login" />}>
 					<Route path='/' element={<DashboardPage />}></Route>
 					{/* <Route path='/empresas' element={isAuthenticated ? <CompaniesPage /> : <Navigate to="/login" />}></Route> */}
 					{/* <Route path='/retos' element={isAuthenticated ? <ChallengesPage /> : <Navigate to="/login" />}></Route> */}
 					<Route path='/categorias' element={<CategoriesProvider><CategoriesPage /></CategoriesProvider>}></Route>
-					{/* <Route path='/prioridades' element={isAuthenticated ? <PrioritiesPage /> : <Navigate to="/login" />}></Route> */}
+					<Route path='/prioridades' element={<PrioritiesProvider><PrioritiesPage /></PrioritiesProvider>}></Route>
 					{/* <Route path='/registros' element={isAuthenticated ? <RecordsPage /> : <Navigate to="/login" />}></Route> */}
 				</Route>
 			</Routes >
