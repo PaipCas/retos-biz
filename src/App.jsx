@@ -10,6 +10,8 @@ import { CategoriesProvider } from './context/CategoriesContext';
 import { DashboardProvider } from './context/DashboardContext';
 import PrioritiesPage from './pages/PrioritiesPage';
 import { PrioritiesProvider } from './context/PrioritiesContext';
+import CompaniesPage from './pages/CompaniesPage';
+import { CompaniesProvider } from './context/CompaniesContext';
 
 export default function App() {
 	const { isAuthenticated } = useContext(AppContext);
@@ -20,7 +22,7 @@ export default function App() {
 
 				<Route element={isAuthenticated ? <DashboardProvider><Container /></DashboardProvider> : <Navigate to="/login" />}>
 					<Route path='/' element={<DashboardPage />}></Route>
-					{/* <Route path='/empresas' element={isAuthenticated ? <CompaniesPage /> : <Navigate to="/login" />}></Route> */}
+					<Route path= '/empresas' element={<CompaniesProvider><CompaniesPage /></CompaniesProvider>}></Route>
 					{/* <Route path='/retos' element={isAuthenticated ? <ChallengesPage /> : <Navigate to="/login" />}></Route> */}
 					<Route path='/categorias' element={<CategoriesProvider><CategoriesPage /></CategoriesProvider>}></Route>
 					<Route path='/prioridades' element={<PrioritiesProvider><PrioritiesPage /></PrioritiesProvider>}></Route>
