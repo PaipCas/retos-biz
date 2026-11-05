@@ -5,7 +5,7 @@ import { toast } from 'sonner';
 
 const ChallengesContext = createContext();
 
-const API_URL = 'http://localhost:3001/api/retos';
+const API_URL = 'http://localhost:3001/api';
 
 // Estados tal como están guardados en la base de datos
 const ESTADOS = ['Pendiente', 'En progreso', 'Completado', 'Cancelado'];
