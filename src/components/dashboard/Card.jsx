@@ -1,6 +1,6 @@
 export default function Card({ title, subtitle, statistics, children }) {
 	return (
-		<div className="bg-white border border-slate-200 rounded-xl p-5">
+		<div className="bg-white border border-slate-200 rounded-xl p-5 h-full">
 			<div className="flex items-center justify-between mb-4">
 				<div>
 					<h2 className="text-sm">{title}</h2>

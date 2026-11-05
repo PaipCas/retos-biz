@@ -8,7 +8,7 @@ export default function NavItem({ link, icon: Icon, text, indicator }) {
 
 				<span className="text-sm flex-1 leading-none">{text}</span>
 
-				{indicator && <span className='flex items-center justify-center min-w-4.5 h-4.5 text-[10px] bg-primary-600 text-white rounded-full px-1'>{indicator}</span>}
+				{indicator > 0 && <span className='flex items-center justify-center min-w-4.5 h-4.5 text-[10px] bg-primary-600 text-white rounded-full px-1'>{indicator}</span>}
 			</NavLink>
 		</div>
 	);
