@@ -1,27 +1,27 @@
 import { useContext } from 'react';
-import { CircleAlert, LoaderCircle, Plus } from 'lucide-react';
+import { CircleAlert, LoaderCircle, Plus, Save } from 'lucide-react';
 import { ChallengesContext } from '../../context/ChallengesContext';
 import Modal from '../container/Modal';
 import Input from '../login/Input';
 import Select from '../login/Select';
 
 export default function ChallengeModal() {
-	const { showCreateModal, closeCreateModal, onCreate, register, errors, isSubmitting, estados, prioridades, categorias, empresas, validateEndDate } = useContext(ChallengesContext);
+	const { showCreateModal, closeCreateModal, isEditing, onSubmit, register, errors, isSubmitting, estados, prioridades, categorias, empresas, validateEndDate } = useContext(ChallengesContext);
 
 	const footer = (
 		<>
 			<button type="button" className="px-3 py-1.5 text-sm rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-100 transition-all duration-150" onClick={closeCreateModal}>Cancelar</button>
 
 			<button type="submit" form="challenge-form" disabled={isSubmitting} className="flex items-center gap-2 px-3 py-1.5 text-sm font-500 rounded-lg bg-primary-600 text-white hover:bg-primary-700 transition-all duration-150 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed">
-				{isSubmitting ? <LoaderCircle className="size-3.5 animate-spin" /> : <Plus className="size-3.5" />}
-				{isSubmitting ? 'Guardando...' : 'Crear reto'}
+				{isSubmitting ? <LoaderCircle className="size-3.5 animate-spin" /> : isEditing ? <Save className="size-3.5" /> : <Plus className="size-3.5" />}
+				{isSubmitting ? 'Guardando...' : isEditing ? 'Guardar cambios' : 'Crear reto'}
 			</button>
 		</>
 	);
 
 	return (
-		<Modal open={showCreateModal} onClose={closeCreateModal} title='Nuevo reto' subtitle='Registra un desafío con su empresa, categoría y prioridad' footer={footer}>
-			<form id="challenge-form" noValidate autoComplete="off" className="space-y-4" onSubmit={onCreate}>
+		<Modal open={showCreateModal} onClose={closeCreateModal} title={isEditing ? 'Editar reto' : 'Nuevo reto'} subtitle={isEditing ? 'Modifica los datos del reto' : 'Registra un desafío con su empresa, categoría y prioridad'} footer={footer}>
+			<form id="challenge-form" noValidate autoComplete="off" className="space-y-4" onSubmit={onSubmit}>
 				<div>
 					<Input type="text" id="challenge-name" label="Nombre" placeholder="Ej: Optimización de rutas urbanas" error={errors.nombre} {...register('nombre', {
 						required: 'Campo obligatorio',
