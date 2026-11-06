@@ -1,26 +1,28 @@
 import { useContext } from 'react';
-import { CircleAlert, LoaderCircle, Plus } from 'lucide-react';
+import { CircleAlert, LoaderCircle, Plus, Save } from 'lucide-react';
 import { CategoriesContext } from '../../context/CategoriesContext';
 import Modal from '../container/Modal';
 import Input from '../login/Input';
 
 export default function CategoryModal() {
-	const { showCreateModal, closeCreateModal, onCreate, register, errors, isSubmitting, areas } = useContext(CategoriesContext);
+	const { showModal, editingCategoria, closeModal, onSubmit, register, errors, isSubmitting, areas } = useContext(CategoriesContext);
+	const isEditing = editingCategoria !== null;
+	const SubmitIcon = isEditing ? Save : Plus;
 
 	const footer = (
 		<>
-			<button type="button" className="px-3 py-1.5 text-sm rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-100 transition-all duration-150" onClick={closeCreateModal}>Cancelar</button>
+			<button type="button" className="px-3 py-1.5 text-sm rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-100 transition-all duration-150" onClick={closeModal}>Cancelar</button>
 
 			<button type="submit" form="category-form" disabled={isSubmitting} className="flex items-center gap-2 px-3 py-1.5 text-sm font-500 rounded-lg bg-primary-600 text-white hover:bg-primary-700 transition-all duration-150 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed">
-				{isSubmitting ? <LoaderCircle className="size-3.5 animate-spin" /> : <Plus className="size-3.5" />}
-				{isSubmitting ? 'Guardando...' : 'Crear categoría'}
+				{isSubmitting ? <LoaderCircle className="size-3.5 animate-spin" /> : <SubmitIcon className="size-3.5" />}
+				{isSubmitting ? 'Guardando...' : isEditing ? 'Guardar cambios' : 'Crear categoría'}
 			</button>
 		</>
 	);
 
 	return (
-		<Modal open={showCreateModal} onClose={closeCreateModal} title='Nueva categoría' subtitle='Clasifica los retos por tipo y área responsable' footer={footer}>
-			<form id="category-form" noValidate autoComplete="off" className="space-y-4" onSubmit={onCreate}>
+		<Modal open={showModal} onClose={closeModal} title={isEditing ? 'Editar categoría' : 'Nueva categoría'} subtitle={isEditing ? editingCategoria.nombre : 'Clasifica los retos por tipo y área responsable'} footer={footer}>
+			<form id="category-form" noValidate autoComplete="off" className="space-y-4" onSubmit={onSubmit}>
 				<div>
 					<Input type="text" id="category-name" label="Nombre" placeholder="Ej: Transformación Digital" error={errors.nombre} {...register('nombre', {
 						required: 'Campo obligatorio',

@@ -1,26 +1,28 @@
 import { useContext } from 'react';
-import { LoaderCircle, Plus } from 'lucide-react';
+import { LoaderCircle, Plus, Save } from 'lucide-react';
 import { PrioritiesContext } from '../../context/PrioritiesContext';
 import Modal from '../container/Modal';
 import Input from '../login/Input';
 
 export default function PriorityModal() {
-	const { showCreateModal, closeCreateModal, onCreate, register, errors, isSubmitting, nextLevel, isNameTaken, isLevelTaken } = useContext(PrioritiesContext);
+	const { showModal, editingPrioridad, closeModal, onSubmit, register, errors, isSubmitting, nextLevel, isNameTaken, isLevelTaken } = useContext(PrioritiesContext);
+	const isEditing = editingPrioridad !== null;
+	const SubmitIcon = isEditing ? Save : Plus;
 
 	const footer = (
 		<>
-			<button type="button" className="px-3 py-1.5 text-sm rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-100 transition-all duration-150" onClick={closeCreateModal}>Cancelar</button>
+			<button type="button" className="px-3 py-1.5 text-sm rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-100 transition-all duration-150" onClick={closeModal}>Cancelar</button>
 
 			<button type="submit" form="priority-form" disabled={isSubmitting} className="flex items-center gap-2 px-3 py-1.5 text-sm font-500 rounded-lg bg-primary-600 text-white hover:bg-primary-700 transition-all duration-150 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed">
-				{isSubmitting ? <LoaderCircle className="size-3.5 animate-spin" /> : <Plus className="size-3.5" />}
-				{isSubmitting ? 'Guardando...' : 'Crear prioridad'}
+				{isSubmitting ? <LoaderCircle className="size-3.5 animate-spin" /> : <SubmitIcon className="size-3.5" />}
+				{isSubmitting ? 'Guardando...' : isEditing ? 'Guardar cambios' : 'Crear prioridad'}
 			</button>
 		</>
 	);
 
 	return (
-		<Modal open={showCreateModal} onClose={closeCreateModal} title='Nueva prioridad' subtitle='Define la urgencia y el tiempo máximo de respuesta' footer={footer}>
-			<form id="priority-form" noValidate autoComplete="off" className="space-y-4" onSubmit={onCreate}>
+		<Modal open={showModal} onClose={closeModal} title={isEditing ? 'Editar prioridad' : 'Nueva prioridad'} subtitle={isEditing ? editingPrioridad.nombre : 'Define la urgencia y el tiempo máximo de respuesta'} footer={footer}>
+			<form id="priority-form" noValidate autoComplete="off" className="space-y-4" onSubmit={onSubmit}>
 				<div>
 					<Input type="text" id="priority-name" label="Nombre" placeholder="Ej: Muy urgente" error={errors.nombre} {...register('nombre', {
 						required: 'Campo obligatorio',
@@ -45,7 +47,7 @@ export default function PriorityModal() {
 							}
 						})} data-required />
 
-						<p className="text-[11px] text-slate-500 mt-1">1 es la más urgente. Siguiente libre: {nextLevel}</p>
+						<p className="text-[11px] text-slate-500 mt-1">1 es la más urgente.{!isEditing && ` Siguiente libre: ${nextLevel}`}</p>
 					</div>
 
 					<div>
