@@ -1,5 +1,6 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
 import LoginPage from './pages/LoginPage';
+import CompaniesPage from './pages/CompaniesPage';
 import ChallengesPage from './pages/ChallengesPage';
 import { useContext } from 'react';
 import { AppContext } from './context/AppContext';
@@ -12,6 +13,7 @@ import { ChallengesProvider } from './context/ChallengesContext';
 import { DashboardProvider } from './context/DashboardContext';
 import PrioritiesPage from './pages/PrioritiesPage';
 import { PrioritiesProvider } from './context/PrioritiesContext';
+
 
 export default function App() {
 	const { isAuthenticated } = useContext(AppContext);
