@@ -12,7 +12,9 @@ function CategoriesProvider({ children }) {
 	const [loading, setLoading] = useState(true);
 	const [search, setSearch] = useState('');
 	const [area, setArea] = useState('');
-	const [showCreateModal, setShowCreateModal] = useState(false);
+	const [showModal, setShowModal] = useState(false);
+	// Categoría que se está editando; null significa que la modal está en modo "crear"
+	const [editingCategoria, setEditingCategoria] = useState(null);
 	const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm();
 
 	useEffect(() => {
@@ -35,34 +37,60 @@ function CategoriesProvider({ children }) {
 
 	const hasFilters = search.trim() !== '' || area !== '';
 
-	const openCreateModal = () => setShowCreateModal(true);
+	// Abre la modal vacía para crear una categoría nueva
+	const openCreateModal = () => {
+		setEditingCategoria(null);
+		reset({ nombre: '', area_responsable: '', descripcion: '' });
+		setShowModal(true);
+	};
+
+	// Abre la modal con los datos de la categoría cargados en el formulario
+	const onEdit = categoria => {
+		setEditingCategoria(categoria);
+		reset({
+			nombre: categoria.nombre,
+			area_responsable: categoria.area_responsable ?? '',
+			descripcion: categoria.descripcion ?? '',
+		});
+		setShowModal(true);
+	};
 
 	// Cierra la modal y limpia el formulario para la próxima vez que se abra
-	const closeCreateModal = useCallback(() => {
-		setShowCreateModal(false);
+	const closeModal = useCallback(() => {
+		setShowModal(false);
+		setEditingCategoria(null);
 		reset();
 	}, [reset]);
 
-	const createCategoria = async data => {
+	const saveCategoria = async data => {
+		const isEditing = editingCategoria !== null;
+		const categoria = {
+			nombre: data.nombre.trim(),
+			descripcion: data.descripcion.trim() || null,
+			area_responsable: data.area_responsable.trim(),
+		};
+
 		try {
-			const response = await axios.post('http://localhost:3001/api/categorias', {
-				nombre: data.nombre.trim(),
-				descripcion: data.descripcion.trim() || null,
-				area_responsable: data.area_responsable.trim(),
-			});
-			setCategorias(prev => [...prev, response.data]);
+			if (isEditing) {
+				const response = await axios.put(`http://localhost:3001/api/categorias/${editingCategoria.id}`, categoria);
+				setCategorias(prev => prev.map(item => item.id === editingCategoria.id ? { ...item, ...response.data } : item));
+			} else {
+				const response = await axios.post('http://localhost:3001/api/categorias', categoria);
+				setCategorias(prev => [...prev, response.data]);
+			}
+
 			markAsUpdated();
-			toast.success('Categoría creada', { description: response.data.nombre });
-			closeCreateModal();
+			toast.success(isEditing ? 'Categoría actualizada' : 'Categoría creada', { description: categoria.nombre });
+			closeModal();
 		} catch (error) {
 			console.error(error);
 			// La columna nombre es UNIQUE: MySQL responde "Duplicate entry" si ya existe
 			const isDuplicated = error.response?.data?.error?.includes('Duplicate');
-			toast.error('No se pudo crear la categoría', { description: isDuplicated ? 'Ya existe una categoría con ese nombre' : 'Intenta de nuevo más tarde' });
+			toast.error(isEditing ? 'No se pudo actualizar la categoría' : 'No se pudo crear la categoría', { description: isDuplicated ? 'Ya existe una categoría con ese nombre' : 'Intenta de nuevo más tarde' });
 		}
 	};
 
-	const onCreate = handleSubmit(createCategoria);
+	const onSubmit = handleSubmit(saveCategoria);
 
 	const deleteCategoria = async categoria => {
 		try {
@@ -76,11 +104,6 @@ function CategoriesProvider({ children }) {
 		}
 	};
 
-	const onEdit = categoria => {
-		// TODO: abrir el formulario de edición con los datos de la categoría
-		console.log('Editar', categoria);
-	};
-
 	const onDelete = categoria => {
 		toast.warning(`¿Eliminar la categoría "${categoria.nombre}"?`, {
 			description: 'Esta acción no se puede deshacer',
@@ -89,7 +112,7 @@ function CategoriesProvider({ children }) {
 		});
 	};
 
-	return <CategoriesContext.Provider value={{ filteredCategorias, loading, search, setSearch, area, setArea, areas, hasFilters, onEdit, onDelete, showCreateModal, openCreateModal, closeCreateModal, register, errors, isSubmitting, onCreate }}>
+	return <CategoriesContext.Provider value={{ filteredCategorias, loading, search, setSearch, area, setArea, areas, hasFilters, onEdit, onDelete, showModal, editingCategoria, openCreateModal, closeModal, register, errors, isSubmitting, onSubmit }}>
 		{children}
 	</CategoriesContext.Provider>;
 };

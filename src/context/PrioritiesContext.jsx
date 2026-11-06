@@ -22,7 +22,9 @@ function PrioritiesProvider({ children }) {
 	const [loading, setLoading] = useState(true);
 	const [search, setSearch] = useState('');
 	const [range, setRange] = useState('');
-	const [showCreateModal, setShowCreateModal] = useState(false);
+	const [showModal, setShowModal] = useState(false);
+	// Prioridad que se está editando; null significa que la modal está en modo "crear"
+	const [editingPrioridad, setEditingPrioridad] = useState(null);
 	const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm();
 
 	useEffect(() => {
@@ -50,41 +52,69 @@ function PrioritiesProvider({ children }) {
 	// Siguiente nivel libre, para sugerirlo en el formulario
 	const nextLevel = prioridades.length > 0 ? Math.max(...prioridades.map(prioridad => prioridad.nivel)) + 1 : 1;
 
-	// Validaciones de unicidad antes de enviar (en la base de datos nombre y nivel son UNIQUE)
-	const isNameTaken = name => prioridades.some(prioridad => prioridad.nombre.toLowerCase() === name.trim().toLowerCase());
-	const isLevelTaken = level => prioridades.some(prioridad => prioridad.nivel === level);
+	// Validaciones de unicidad antes de enviar (en la base de datos nombre y nivel son UNIQUE).
+	// Al editar se ignora la propia prioridad, para que conservar su nombre o nivel no cuente como repetido
+	const otherPrioridades = prioridades.filter(prioridad => prioridad.id !== editingPrioridad?.id);
+	const isNameTaken = name => otherPrioridades.some(prioridad => prioridad.nombre.toLowerCase() === name.trim().toLowerCase());
+	const isLevelTaken = level => otherPrioridades.some(prioridad => prioridad.nivel === level);
 
-	const openCreateModal = () => setShowCreateModal(true);
+	// Abre la modal vacía para crear una prioridad nueva
+	const openCreateModal = () => {
+		setEditingPrioridad(null);
+		reset({ nombre: '', nivel: '', dias_max_respuesta: '' });
+		setShowModal(true);
+	};
+
+	// Abre la modal con los datos de la prioridad cargados en el formulario
+	const onEdit = prioridad => {
+		setEditingPrioridad(prioridad);
+		reset({
+			nombre: prioridad.nombre,
+			nivel: prioridad.nivel,
+			dias_max_respuesta: prioridad.dias_max_respuesta,
+		});
+		setShowModal(true);
+	};
 
 	// Cierra la modal y limpia el formulario para la próxima vez que se abra
-	const closeCreateModal = useCallback(() => {
-		setShowCreateModal(false);
+	const closeModal = useCallback(() => {
+		setShowModal(false);
+		setEditingPrioridad(null);
 		reset();
 	}, [reset]);
 
-	const createPrioridad = async data => {
+	const savePrioridad = async data => {
+		const isEditing = editingPrioridad !== null;
+		const prioridad = {
+			nombre: data.nombre.trim(),
+			nivel: data.nivel,
+			dias_max_respuesta: data.dias_max_respuesta,
+		};
+
 		try {
-			const response = await axios.post('http://localhost:3001/api/prioridades', {
-				nombre: data.nombre.trim(),
-				nivel: data.nivel,
-				dias_max_respuesta: data.dias_max_respuesta,
-			});
-			setPrioridades(prev => [...prev, response.data]);
+			if (isEditing) {
+				const response = await axios.put(`http://localhost:3001/api/prioridades/${editingPrioridad.id}`, prioridad);
+				setPrioridades(prev => prev.map(item => item.id === editingPrioridad.id ? { ...item, ...response.data } : item));
+			} else {
+				const response = await axios.post('http://localhost:3001/api/prioridades', prioridad);
+				setPrioridades(prev => [...prev, response.data]);
+			}
+
 			markAsUpdated();
-			toast.success('Prioridad creada', { description: response.data.nombre });
-			closeCreateModal();
+			toast.success(isEditing ? 'Prioridad actualizada' : 'Prioridad creada', { description: prioridad.nombre });
+			closeModal();
 		} catch (error) {
 			console.error(error);
-			// Respaldo por si otro usuario creó el mismo nombre o nivel mientras la modal estaba abierta
+			// Respaldo por si otro usuario usó el mismo nombre o nivel mientras la modal estaba abierta
 			const message = error.response?.data?.error ?? '';
 			const description = message.includes('uq_prioridades_nivel') ? 'Ya existe una prioridad con ese nivel'
 				: message.includes('uq_prioridades_nombre') ? 'Ya existe una prioridad con ese nombre'
 				: 'Intenta de nuevo más tarde';
-			toast.error('No se pudo crear la prioridad', { description });
+			toast.error(isEditing ? 'No se pudo actualizar la prioridad' : 'No se pudo crear la prioridad', { description });
 		}
 	};
 
-	const onCreate = handleSubmit(createPrioridad);
+	const onSubmit = handleSubmit(savePrioridad);
 
 	const deletePrioridad = async prioridad => {
 		try {
@@ -98,11 +128,6 @@ function PrioritiesProvider({ children }) {
 		}
 	};
 
-	const onEdit = prioridad => {
-		// TODO: abrir el formulario de edición con los datos de la prioridad
-		console.log('Editar', prioridad);
-	};
-
 	const onDelete = prioridad => {
 		toast.warning(`¿Eliminar la prioridad "${prioridad.nombre}"?`, {
 			description: 'Esta acción no se puede deshacer',
@@ -111,7 +136,7 @@ function PrioritiesProvider({ children }) {
 		});
 	};
 
-	return <PrioritiesContext.Provider value={{ filteredPrioridades, loading, search, setSearch, range, setRange, ranges: RANGES, hasFilters, onEdit, onDelete, showCreateModal, openCreateModal, closeCreateModal, register, errors, isSubmitting, onCreate, nextLevel, isNameTaken, isLevelTaken }}>
+	return <PrioritiesContext.Provider value={{ filteredPrioridades, loading, search, setSearch, range, setRange, ranges: RANGES, hasFilters, onEdit, onDelete, showModal, editingPrioridad, openCreateModal, closeModal, register, errors, isSubmitting, onSubmit, nextLevel, isNameTaken, isLevelTaken }}>
 		{children}
 	</PrioritiesContext.Provider>;
 };
