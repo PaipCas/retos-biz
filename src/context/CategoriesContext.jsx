@@ -108,7 +108,7 @@ function CategoriesProvider({ children }) {
 		toast.warning(`¿Eliminar la categoría "${categoria.nombre}"?`, {
 			description: 'Esta acción no se puede deshacer',
 			action: { label: 'Eliminar', onClick: () => deleteCategoria(categoria) },
-			cancel: { label: 'Cancelar', onClick: () => {} },
+			cancel: { label: 'Cancelar', onClick: () => { } },
 		});
 	};
 

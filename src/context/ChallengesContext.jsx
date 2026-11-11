@@ -1,7 +1,8 @@
 import axios from 'axios';
-import { createContext, useCallback, useEffect, useState } from 'react';
+import { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
+import { DashboardContext } from './DashboardContext';
 
 const ChallengesContext = createContext();
 
@@ -29,6 +30,7 @@ const toNamesMap = list => Object.fromEntries(list.map(item => [item.id, item.no
 const toDateInput = value => value ? String(value).slice(0, 10) : '';
 
 function ChallengesProvider({ children }) {
+	const { markAsUpdated } = useContext(DashboardContext);
 	const [challenges, setChallenges] = useState([]);
 	const [prioridades, setPrioridades] = useState([]);
 	const [categorias, setCategorias] = useState([]);
@@ -114,6 +116,7 @@ function ChallengesProvider({ children }) {
 			await axios.post(`${API_URL}/retos`, buildPayload(data));
 			// Se vuelve a pedir la lista para traer el reto con el id que genera el backend
 			await fetchChallenges();
+			markAsUpdated();
 			toast.success('Reto creado', { description: data.nombre.trim() });
 			closeCreateModal();
 		} catch (error) {
@@ -126,6 +129,7 @@ function ChallengesProvider({ children }) {
 		try {
 			await axios.put(`${API_URL}/retos/${editingChallenge.id}`, buildPayload(data));
 			await fetchChallenges();
+			markAsUpdated();
 			toast.success('Reto actualizado', { description: data.nombre.trim() });
 			closeCreateModal();
 		} catch (error) {
@@ -141,6 +145,7 @@ function ChallengesProvider({ children }) {
 		try {
 			await axios.delete(`${API_URL}/retos/${challenge.id}`);
 			setChallenges(prev => prev.filter(item => item.id !== challenge.id));
+			markAsUpdated();
 			toast.success('Reto eliminado', { description: challenge.nombre });
 		} catch (error) {
 			console.error(error);
@@ -168,7 +173,7 @@ function ChallengesProvider({ children }) {
 		toast.warning(`¿Eliminar el reto "${challenge.nombre}"?`, {
 			description: 'Esta acción no se puede deshacer',
 			action: { label: 'Eliminar', onClick: () => deleteChallenge(challenge) },
-			cancel: { label: 'Cancelar', onClick: () => {} },
+			cancel: { label: 'Cancelar', onClick: () => { } },
 		});
 	};
 

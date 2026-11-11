@@ -15,7 +15,7 @@ function CompaniesProvider({ children }) {
     const [activaFilter, setActivaFilter] = useState('');
     const [showModal, setShowModal] = useState(false);
     const [editingEmpresa, setEditingEmpresa] = useState(null); // Guarda la empresa que se está editando
-    
+
     const { register, handleSubmit, reset, setValue, formState: { errors, isSubmitting } } = useForm();
 
     useEffect(() => {
@@ -30,17 +30,17 @@ function CompaniesProvider({ children }) {
 
     const sectores = [...new Set(empresas.map(empresa => empresa.sector).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'es'));
 
-const filteredEmpresas = empresas.filter(empresa => {
-        const matchesSearch = 
+    const filteredEmpresas = empresas.filter(empresa => {
+        const matchesSearch =
             empresa.nombre?.toLowerCase().includes(search.trim().toLowerCase()) ||
             empresa.nit?.toString().includes(search.trim()) ||
             empresa.correo?.toLowerCase().includes(search.trim().toLowerCase());
 
         const matchesSector = !sector || empresa.sector === sector;
-        
+
         // Corrección aquí: Compara si coincide el 1/0 de la base de datos con el "true"/"false" del select
-        const matchesActiva = 
-            activaFilter === '' || 
+        const matchesActiva =
+            activaFilter === '' ||
             (activaFilter === 'true' && (empresa.activa === 1 || empresa.activa === true)) ||
             (activaFilter === 'false' && (empresa.activa === 0 || empresa.activa === false));
 
@@ -118,8 +118,8 @@ const filteredEmpresas = empresas.filter(empresa => {
             } catch (error) {
                 console.error(error);
                 const isDuplicated = error.response?.data?.error?.includes('Duplicate');
-                toast.error('No se pudo crear la empresa', { 
-                    description: isDuplicated ? 'Ya existe una empresa con este NIT o correo' : 'Intenta de nuevo más tarde' 
+                toast.error('No se pudo crear la empresa', {
+                    description: isDuplicated ? 'Ya existe una empresa con este NIT o correo' : 'Intenta de nuevo más tarde'
                 });
             }
         }
@@ -143,30 +143,30 @@ const filteredEmpresas = empresas.filter(empresa => {
         toast.warning(`¿Eliminar la empresa "${empresa.nombre}"?`, {
             description: 'Esta acción no se puede deshacer',
             action: { label: 'Eliminar', onClick: () => deleteEmpresa(empresa) },
-            cancel: { label: 'Cancelar', onClick: () => {} },
+            cancel: { label: 'Cancelar', onClick: () => { } },
         });
     };
 
     return (
-        <CompaniesContext.Provider value={{ 
-            filteredEmpresas, 
-            loading, 
-            search, 
-            setSearch, 
-            sector, 
-            setSector, 
-            sectores, 
+        <CompaniesContext.Provider value={{
+            filteredEmpresas,
+            loading,
+            search,
+            setSearch,
+            sector,
+            setSector,
+            sectores,
             activaFilter,
             setActivaFilter,
-            hasFilters, 
-            onEdit, 
-            onDelete, 
-            showModal, 
-            openCreateModal, 
-            closeModal, 
-            register, 
-            errors, 
-            isSubmitting, 
+            hasFilters,
+            onEdit,
+            onDelete,
+            showModal,
+            openCreateModal,
+            closeModal,
+            register,
+            errors,
+            isSubmitting,
             onCreate,
             editingEmpresa
         }}>

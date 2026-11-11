@@ -109,7 +109,7 @@ function PrioritiesProvider({ children }) {
 			const message = error.response?.data?.error ?? '';
 			const description = message.includes('uq_prioridades_nivel') ? 'Ya existe una prioridad con ese nivel'
 				: message.includes('uq_prioridades_nombre') ? 'Ya existe una prioridad con ese nombre'
-				: 'Intenta de nuevo más tarde';
+					: 'Intenta de nuevo más tarde';
 			toast.error(isEditing ? 'No se pudo actualizar la prioridad' : 'No se pudo crear la prioridad', { description });
 		}
 	};
@@ -132,7 +132,7 @@ function PrioritiesProvider({ children }) {
 		toast.warning(`¿Eliminar la prioridad "${prioridad.nombre}"?`, {
 			description: 'Esta acción no se puede deshacer',
 			action: { label: 'Eliminar', onClick: () => deletePrioridad(prioridad) },
-			cancel: { label: 'Cancelar', onClick: () => {} },
+			cancel: { label: 'Cancelar', onClick: () => { } },
 		});
 	};
 
