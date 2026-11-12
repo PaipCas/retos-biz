@@ -208,7 +208,7 @@ function RecordsProvider({ children }) {
     toast.warning(`¿Eliminar el registro #${record.id}?`, {
       description: "Esta acción no se puede deshacer",
       action: { label: "Eliminar", onClick: () => deleteRecord(record) },
-      cancel: { label: "Cancelar", onClick: () => {} },
+      cancel: { label: "Cancelar", onClick: () => { } },
     });
   };
 
